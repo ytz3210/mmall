@@ -1,1 +1,1 @@
-### com.mmall
+### mmall

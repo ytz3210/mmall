@@ -9,9 +9,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>cn.yang</groupId>
-    <artifactId>com.mmall</artifactId>
+    <artifactId>mmall</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>com.mmall</name>
+    <name>mmall</name>
     <description>Demo project for Spring Boot</description>
 
     <properties>
