@@ -1,6 +1,6 @@
 spring:
   datasource:
-    driver-class-name: com.mysql.jdbc.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3306/mmall?characterEncoding=utf-8
     username: root
     password: root
@@ -11,3 +11,5 @@ spring:
       min-idle: 5
       max-wait: 6000
       time-between-eviction-runs-millis: 6000
+mybatis:
+  mapper-locations: classpath:mappers/*.xml
