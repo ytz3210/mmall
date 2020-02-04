@@ -3,6 +3,7 @@ package cn.yang.tmall.dao;
 import cn.yang.tmall.pojo.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+
 @Mapper
 public interface UserMapper {
     int deleteByPrimaryKey(Integer id);
@@ -25,5 +26,11 @@ public interface UserMapper {
 
     String selectQuestion(String userName);
 
-    int checkAnswer(@Param("username") String userName,@Param("question") String question,@Param("answer") String answer);
+    int checkAnswer(@Param("username") String userName, @Param("question") String question, @Param("answer") String answer);
+
+    int updatePasswordByUserName(@Param("username") String userName, @Param("password") String password);
+
+    int checkPassword(@Param("password") String password,@Param("userId") Integer userId);
+
+    int checkEmailByUserId(@Param("email") String email,@Param("userId") Integer userId);
 }

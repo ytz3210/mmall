@@ -2,14 +2,17 @@ package cn.yang.tmall.service.impl;
 
 import cn.yang.tmall.common.Const;
 import cn.yang.tmall.common.RestTO;
+import cn.yang.tmall.common.TokenCache;
 import cn.yang.tmall.dao.UserMapper;
 import cn.yang.tmall.pojo.User;
 import cn.yang.tmall.service.IUserService;
 import cn.yang.tmall.utils.MD5Util;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
+import java.util.UUID;
 
 /**
  * @author Yangtz
@@ -97,7 +100,78 @@ public class UserServiceImpl implements IUserService {
     public RestTO<String> checkAnswer(String userName, String question, String answer) {
         int resultCount = userMapper.checkAnswer(userName,question,answer);
         if(resultCount > 0){
-            return RestTO.success()
+            String forgetToken = UUID.randomUUID().toString();
+            TokenCache.setKey(TokenCache.TOKEN_PREFIX+userName,forgetToken);
+            return RestTO.success(forgetToken);
         }
+        return RestTO.error("问题的答案错误");
+    }
+
+    @Override
+    public RestTO<String> forgetRestPassword(String userName, String newPassword, String forgetToken) {
+        if(org.apache.commons.lang3.StringUtils.isBlank(forgetToken)){
+            return RestTO.error("参数错误，token需要传递");
+        }
+        RestTO result = this.checkValue(userName,Const.USERNAME);
+        if(result.isSuccess()){
+            return RestTO.error("用户不存在");
+        }
+        String token = TokenCache.getKey(TokenCache.TOKEN_PREFIX+userName);
+        if(org.apache.commons.lang3.StringUtils.isBlank(token)){
+            return RestTO.error("token无效或过期");
+        }
+        if(org.apache.commons.lang3.StringUtils.equals(token,forgetToken)){
+            String md5Password = MD5Util.MD5EncodeUtf8(newPassword);
+            int rowCount = userMapper.updatePasswordByUserName(userName,md5Password);
+            if(rowCount > 0){
+                return RestTO.success("密码修改成功");
+            }else {
+                return RestTO.error("token错误，请重新获取重置密码的token");
+            }
+        }
+        return RestTO.error("修改密码失败");
+    }
+
+    @Override
+    public RestTO<String> restPassword(String oldPassword, String newPassword, User user) {
+        int resultCount = userMapper.checkPassword(oldPassword,user.getId());
+        if(resultCount == 0){
+            return RestTO.error("旧密码错误");
+        }
+        user.setPassword(MD5Util.MD5EncodeUtf8(newPassword));
+        int updateCount = userMapper.updateByPrimaryKeySelective(user);
+        if(updateCount > 0){
+            return RestTO.success("密码更新成功");
+        }
+        return RestTO.error("密码更新失败");
+    }
+
+    @Override
+    public RestTO<User> updateUserInfo(User user) {
+        int resultCount = userMapper.checkEmailByUserId(user.getEmail(),user.getId());
+        if(resultCount > 0){
+            return RestTO.error("email已经存在，请更换之后再尝试");
+        }
+        User updateUser = new User();
+        updateUser.setId(user.getId());
+        updateUser.setEmail(user.getEmail());
+        updateUser.setPhone(user.getPhone());
+        updateUser.setQuestion(user.getQuestion());
+        updateUser.setAnswer(user.getAnswer());
+        int updateCount = userMapper.updateByPrimaryKeySelective(updateUser);
+        if(updateCount > 0){
+            return RestTO.success("用户信息更新成功",updateUser);
+        }
+        return RestTO.error("用户信息更新失败");
+    }
+
+    @Override
+    public RestTO<User> forceLogin(Integer userId) {
+        User user = userMapper.selectByPrimaryKey(userId);
+        if(StringUtils.isEmpty(user)){
+            return RestTO.error("未找到当前用户，请确认登录信息");
+        }
+        user.setPassword(org.apache.commons.lang3.StringUtils.EMPTY);
+        return RestTO.success("登录成功",user);
     }
 }

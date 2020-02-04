@@ -15,4 +15,8 @@ public interface IUserService {
     RestTO<String> checkValue(String str,String type);
     RestTO<String> selectQuestion(String userName);
     RestTO<String> checkAnswer(String userName,String question,String answer);
+    RestTO<String> forgetRestPassword(String userName,String newPassword,String forgetToken);
+    RestTO<String> restPassword(String oldPassword,String newPassword,User user);
+    RestTO<User> updateUserInfo(User user);
+    RestTO<User> forceLogin(Integer userId);
 }
