@@ -1,4 +1,4 @@
-package com.mmall.common;
+package cn.yang.tmall.common;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;

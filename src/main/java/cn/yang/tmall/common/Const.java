@@ -6,6 +6,10 @@ package cn.yang.tmall.common;
  * @Description:
  * @create 2020-01-20 16:54
  */
-public abstract class Const {
+public interface Const {
     String CRUUENT_USER = "currentUser";
+    int ROLE_CUSTOMER = 0; //普通用户
+    int ROLE_ADMIN = 1; //管理员
+    String USERNAME = "userName";
+    String EMAIL = "email";
 }

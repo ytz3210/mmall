@@ -1,4 +1,4 @@
-package com.mmall.common;
+package cn.yang.tmall.common;
 
 import lombok.Data;
 
