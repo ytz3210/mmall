@@ -3,6 +3,9 @@ package cn.yang.tmall.dao;
 
 import cn.yang.tmall.pojo.Category;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 @Mapper
 public interface CategoryMapper {
@@ -17,4 +20,6 @@ public interface CategoryMapper {
     int updateByPrimaryKeySelective(Category record);
 
     int updateByPrimaryKey(Category record);
+
+    List<Category> selectCategoryChildrenByParentId(@Param("parent_id") Integer parentId);
 }
