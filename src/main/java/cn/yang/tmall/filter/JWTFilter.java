@@ -3,16 +3,17 @@ package cn.yang.tmall.filter;
 import cn.yang.tmall.common.Const;
 import cn.yang.tmall.common.ResponseCode;
 import cn.yang.tmall.common.RestTO;
+import cn.yang.tmall.common.UserProperties;
 import cn.yang.tmall.config.RedisClient;
 import cn.yang.tmall.pojo.JwtToken;
 import cn.yang.tmall.utils.JWTUtil;
+import cn.yang.tmall.utils.SpringUtils;
 import com.alibaba.fastjson.JSONObject;
 import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.ServletRequest;
@@ -29,12 +30,8 @@ import java.util.Objects;
  * @Description:
  * @create 2020-02-19 17:36
  */
+@Component
 public class JWTFilter extends BasicHttpAuthenticationFilter {
-    @Value("${config.refreshToken-expireTime}")
-    private String refreshTokenExpireTime;
-
-    @Autowired
-    private RedisClient redisClient;
 
     /**
      * 这里我们详细说明下为什么最终返回的都是true，即允许访问 例如我们提供一个地址 GET /article 登入用户和游客看到的内容是不同的
@@ -58,7 +55,7 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
                 if (throwable instanceof SignatureVerificationException) {
                     // 该异常为JWT的AccessToken认证失败(Token或者密钥不正确)
                     msg = "token或者密钥不正确(" + throwable.getMessage() + ")";
-                }else if (throwable instanceof TokenExpiredException) {
+                } else if (throwable instanceof TokenExpiredException) {
                     // 该异常为JWT的AccessToken已过期，判断RefreshToken未过期就进行AccessToken刷新
                     if (this.refreshToken(request, response)) {
                         return true;
@@ -105,21 +102,25 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
         // 如果没有抛出异常则代表登入成功，返回true
         return true;
     }
+
     /**
      * 刷新AccessToken，进行判断RefreshToken是否过期，未过期就返回新的AccessToken且继续正常访问
      */
     private boolean refreshToken(ServletRequest request, ServletResponse response) {
+        RedisClient redisClient = SpringUtils.getBean(RedisClient.class);
+        UserProperties userProperties = SpringUtils.getBean(UserProperties.class);
+        String refreshTokenExpireTime = userProperties.getRefreshTokenExpireTime();
         // 拿到当前Header中Authorization的AccessToken(Shiro中getAuthzHeader方法已经实现)
         String token = this.getAuthzHeader(request);
         // 获取当前Token的帐号信息
-        String userName = JWTUtil.getClaim(token,Const.USERNAME);
+        String userName = JWTUtil.getClaim(token, Const.USERNAME);
         // 判断Redis中RefreshToken是否存在
-        if(redisClient.hasKey(Const.PREFIX_REFRESH_TOKEN)){
+        if (redisClient.hasKey(Const.PREFIX_REFRESH_TOKEN + userName)) {
             // Redis中RefreshToken还存在，获取RefreshToken的时间戳
             String currentTimeMillisRedis = redisClient.get(Const.PREFIX_REFRESH_TOKEN + userName).toString();
             // 获取当前最新时间戳
             String currentTimeMillis = String.valueOf(System.currentTimeMillis());
-            if (Objects.equals(JWTUtil.getClaim(token, Const.CURRENT_TIME_MILLIS), currentTimeMillisRedis)) {
+            if (Objects.equals(JWTUtil.getClaim(token, Const.CURRENT_TIME_MILLIONS), currentTimeMillisRedis)) {
                 // 设置RefreshToken中的时间戳为当前最新时间戳，且刷新过期时间重新为30分钟过期(配置文件可配置refreshTokenExpireTime属性)
                 redisClient.set(Const.PREFIX_REFRESH_TOKEN + userName, currentTimeMillis,
                         Integer.parseInt(refreshTokenExpireTime));

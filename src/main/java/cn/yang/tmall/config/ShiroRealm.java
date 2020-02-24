@@ -3,8 +3,6 @@ package cn.yang.tmall.config;
 import cn.yang.tmall.common.Const;
 import cn.yang.tmall.dao.UserMapper;
 import cn.yang.tmall.pojo.JwtToken;
-import cn.yang.tmall.pojo.User;
-import cn.yang.tmall.service.IUserService;
 import cn.yang.tmall.utils.JWTUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -23,7 +21,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * @author Yangtz
@@ -42,6 +39,7 @@ public class ShiroRealm extends AuthorizingRealm {
 
     @Resource
     private UserMapper userMapper;
+
     /**
      * 大坑，必须重写此方法，不然Shiro会报错
      */
@@ -91,7 +89,7 @@ public class ShiroRealm extends AuthorizingRealm {
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken auth) throws AuthenticationException {
         logger.debug("—————身份认证——————");
-        String token = (String)auth.getCredentials();
+        String token = (String) auth.getCredentials();
         if (StringUtils.isBlank(token)) {
             throw new AuthenticationException("token cannot be empty.");
         }
@@ -111,7 +109,7 @@ public class ShiroRealm extends AuthorizingRealm {
             // 获取RefreshToken的时间戳
             String currentTimeMillisRedis = redisClient.get(Const.PREFIX_REFRESH_TOKEN + userName).toString();
             // 获取AccessToken时间戳，与RefreshToken的时间戳对比
-            if (Objects.equals(JWTUtil.getClaim(token, Const.CURRENT_TIME_MILLIS), currentTimeMillisRedis)) {
+            if (Objects.equals(JWTUtil.getClaim(token, Const.CURRENT_TIME_MILLIONS), currentTimeMillisRedis)) {
                 return new SimpleAuthenticationInfo(token, token, "userRealm");
             }
         }

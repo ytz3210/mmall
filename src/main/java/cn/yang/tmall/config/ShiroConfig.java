@@ -106,6 +106,11 @@ public class ShiroConfig {
         return securityManager;
     }
 
+    @Bean("jwtFilter")
+    public JWTFilter jwtFilterBean() {
+        return new JWTFilter();
+    }
+
     /**
      * 下面的代码是添加注解支持
      *

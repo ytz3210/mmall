@@ -49,7 +49,7 @@ public class JWTUtil {
     private String encryptJWTKey1;
 
     @PostConstruct
-    public void test(){
+    public void init() {
         JWTUtil.accessTokenExpireTime = accessTokenExpireTime1;
         JWTUtil.encryptJWTKey = encryptJWTKey1;
     }

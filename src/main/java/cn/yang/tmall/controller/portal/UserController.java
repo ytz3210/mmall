@@ -71,7 +71,6 @@ public class UserController {
      * @Author: Yangtz
      * @Date: 2020-02-03 14:48
      */
-    //todo
 //    public RestTO checkValue(String str,String type){
 //
 //    }
