@@ -19,7 +19,7 @@
     id, username, password, email, phone, question, answer, role, create_time, update_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from mmall_user
     where id = #{id,jdbcType=INTEGER}
@@ -160,6 +160,7 @@
     where email = #{email}
   </select>
   <select id="selectLogin" resultMap="BaseResultMap" parameterType="map">
+    select
     <include refid="Base_Column_List" />
     from mmall_user
     where username = #{username}
@@ -168,7 +169,7 @@
   <select id="selectQuestion" resultType="string" parameterType="string">
     select question
     from mmall_user
-    where username = #{username}
+    where username = #{userName}
   </select>
   <select id="checkAnswer" resultType="int" parameterType="map">
     select count(1)

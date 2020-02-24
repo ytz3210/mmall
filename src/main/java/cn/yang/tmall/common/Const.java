@@ -12,4 +12,7 @@ public interface Const {
     int ROLE_ADMIN = 1; //管理员
     String USERNAME = "userName";
     String EMAIL = "email";
+    String CURRENT_TIME_MILLIS = "currentTimeMillis";
+    String PREFIX_USER_TOKEN = "Authorization";
+    String PREFIX_REFRESH_TOKEN = "Refresh-Token";
 }

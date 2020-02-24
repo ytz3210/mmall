@@ -3,15 +3,16 @@ package cn.yang.tmall.controller.portal;
 import cn.yang.tmall.common.Const;
 import cn.yang.tmall.common.ResponseCode;
 import cn.yang.tmall.common.RestTO;
+import cn.yang.tmall.model.SysLoginModel;
 import cn.yang.tmall.pojo.User;
 import cn.yang.tmall.service.IUserService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -22,6 +23,7 @@ import javax.servlet.http.HttpSession;
  */
 @RestController
 @RequestMapping("/user")
+@Api(value = "/user", tags = "用户登录模块")
 public class UserController {
 
     @Autowired
@@ -36,12 +38,9 @@ public class UserController {
      * @Date: 2020-01-20 14:53
      */
     @PostMapping("/login")
-    public RestTO login(String userName, String password, HttpSession session) {
-        RestTO<User> response = iUserService.login(userName, password);
-        if (response.isSuccess()) {
-            session.setAttribute(Const.CURRENT_USER, response.getData());
-        }
-        return response;
+    @ApiOperation(value = "用户登录接口", notes = "用户登录接口，需要参数", httpMethod = "POST")
+    public RestTO login(@RequestBody SysLoginModel user, HttpServletResponse response) {
+        return iUserService.login(user.getUsername(), user.getPassword(), response);
     }
 
     /**
@@ -50,7 +49,7 @@ public class UserController {
      * @Author: Yangtz
      * @Date: 2020-02-03 13:20
      */
-    @GetMapping("/logout")
+    @PostMapping("/logout")
     public RestTO logout(HttpSession session) {
         session.removeAttribute(Const.CURRENT_USER);
         return RestTO.success();
@@ -97,7 +96,7 @@ public class UserController {
      * @Author: Yangtz
      * @Date: 2020-02-03 15:23
      */
-    @GetMapping("/forget_question")
+    @PostMapping("/forget_question")
     public RestTO forgetGetQuestion(String userName) {
         return iUserService.selectQuestion(userName);
     }
@@ -108,20 +107,22 @@ public class UserController {
      * @Author: Yangtz
      * @Date: 2020-02-03 15:23
      */
-    @GetMapping("/forget_check_answer")
-    public RestTO forgetCheckAnswer(String userName, String question, String answer) {
-        return iUserService.checkAnswer(userName, question, answer);
+    @PostMapping("/forget_check_answer")
+    public RestTO forgetCheckAnswer(@RequestBody User user) {
+        return iUserService.checkAnswer(user.getUsername(), user.getQuestion(), user.getAnswer());
     }
+
     /**
      * @Description: 忘记密码状态下用户重置密码
      * @Param userName
      * @Author: Yangtz
      * @Date: 2020-02-03 15:23
      */
-    @GetMapping("/forget_reset_password")
+    @PostMapping("/forget_reset_password")
     public RestTO forgetRestPassword(String userName, String newPassword, String forgetToken) {
         return iUserService.forgetRestPassword(userName, newPassword, forgetToken);
     }
+
     /**
      * @Description: 登录状态下用户重置密码
      * @Param userName
@@ -129,13 +130,14 @@ public class UserController {
      * @Date: 2020-02-03 15:23
      */
     @PostMapping("/reset_password")
-    public RestTO resetPassword(HttpSession session,String oldPassword,String newPassword){
-        User user = (User)session.getAttribute(Const.CURRENT_USER);
-        if(StringUtils.isEmpty(user)){
+    public RestTO resetPassword(HttpSession session, String oldPassword, String newPassword) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (StringUtils.isEmpty(user)) {
             return RestTO.error("用户未登录");
         }
-        return iUserService.restPassword(oldPassword,newPassword,user);
+        return iUserService.restPassword(oldPassword, newPassword, user);
     }
+
     /**
      * @Description: 更新用户信息
      * @Param userName
@@ -143,30 +145,31 @@ public class UserController {
      * @Date: 2020-02-03 15:23
      */
     @PostMapping("/update_user_info")
-    public RestTO updateUserInfo(HttpSession session,User user){
-        User currentUser = (User)session.getAttribute(Const.CURRENT_USER);
-        if(StringUtils.isEmpty(currentUser)){
+    public RestTO updateUserInfo(HttpSession session, User user) {
+        User currentUser = (User) session.getAttribute(Const.CURRENT_USER);
+        if (StringUtils.isEmpty(currentUser)) {
             return RestTO.error("用户未登录");
         }
         user.setId(currentUser.getId());
         user.setUsername(currentUser.getUsername());
         RestTO<User> response = iUserService.updateUserInfo(user);
-        if(response.isSuccess()){
-            session.setAttribute(Const.CURRENT_USER,response.getData());
+        if (response.isSuccess()) {
+            session.setAttribute(Const.CURRENT_USER, response.getData());
         }
         return response;
     }
+
     /**
      * @Description: 获取用户信息，没有则强制登录
      * @Param userName
      * @Author: Yangtz
      * @Date: 2020-02-03 15:23
      */
-    @GetMapping("/force_login")
-    public RestTO forceLogin(HttpSession session){
-        User currentUser = (User)session.getAttribute(Const.CURRENT_USER);
-        if(StringUtils.isEmpty(currentUser)){
-            return RestTO.error(ResponseCode.NEED_LOGIN.getCode(),"未登录，请登录后再操作");
+    @PostMapping("/force_login")
+    public RestTO forceLogin(HttpSession session) {
+        User currentUser = (User) session.getAttribute(Const.CURRENT_USER);
+        if (StringUtils.isEmpty(currentUser)) {
+            return RestTO.error(ResponseCode.NEED_LOGIN.getCode(), "未登录，请登录后再操作");
         }
         return iUserService.forceLogin(currentUser.getId());
     }

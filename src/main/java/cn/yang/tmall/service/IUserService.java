@@ -3,6 +3,8 @@ package cn.yang.tmall.service;
 import cn.yang.tmall.common.RestTO;
 import cn.yang.tmall.pojo.User;
 
+import javax.servlet.http.HttpServletResponse;
+
 /**
  * @author Yangtz
  * @ClassName: IUserService
@@ -10,7 +12,7 @@ import cn.yang.tmall.pojo.User;
  * @create 2020-01-20 14:33
  */
 public interface IUserService {
-    RestTO<User> login(String userName, String password);
+    RestTO<User> login(String userName, String password, HttpServletResponse response);
     RestTO<String> register(User user);
     RestTO<String> checkValue(String str,String type);
     RestTO<String> selectQuestion(String userName);

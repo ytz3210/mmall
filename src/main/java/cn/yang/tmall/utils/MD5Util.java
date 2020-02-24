@@ -1,7 +1,5 @@
 package cn.yang.tmall.utils;
 
-import org.springframework.util.StringUtils;
-
 import java.security.MessageDigest;
 /**
  * @ClassName: MD5Util
@@ -11,7 +9,7 @@ import java.security.MessageDigest;
 public class MD5Util {
 
     private static String byteArrayToHexString(byte b[]) {
-        StringBuffer resultSb = new StringBuffer();
+        StringBuilder resultSb = new StringBuilder();
         for (int i = 0; i < b.length; i++)
             resultSb.append(byteToHexString(b[i]));
 
