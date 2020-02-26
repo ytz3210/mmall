@@ -23,11 +23,15 @@ spring:
         max-wait: -1
         max-idle: 8
         min-idle: 0
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB #单个文件大小
+      max-request-size: 100MB #上传文件总大小
 mybatis:
   mapper-locations: classpath:mappers/*.xml
-
 config:
   encrypt-jwtKey: U0JBUElOENhspJrzkyNjQ1NA # JWT认证加密私钥(Base64加密)
-  accessToken-expireTime: 600 # AccessToken过期时间(秒)
-  refreshToken-expireTime: 604800  # RefreshToken过期时间(秒)
+  accessToken-expireTime: 300 # AccessToken过期时间(秒)
+  refreshToken-expireTime: 1800  # RefreshToken过期时间(秒)
   shiro-cache-expireTime: 600 # Shiro缓存过期时间(秒)(一般设置与AccessToken过期时间一致) 此处CustomCache读取失败，待解决

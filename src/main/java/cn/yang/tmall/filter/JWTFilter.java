@@ -3,9 +3,9 @@ package cn.yang.tmall.filter;
 import cn.yang.tmall.common.Const;
 import cn.yang.tmall.common.ResponseCode;
 import cn.yang.tmall.common.RestTO;
-import cn.yang.tmall.common.UserProperties;
 import cn.yang.tmall.config.RedisClient;
 import cn.yang.tmall.pojo.JwtToken;
+import cn.yang.tmall.properties.UserProperties;
 import cn.yang.tmall.utils.JWTUtil;
 import cn.yang.tmall.utils.SpringUtils;
 import com.alibaba.fastjson.JSONObject;
@@ -47,6 +47,20 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
             try {
                 // 进行Shiro的登录UserRealm
                 this.executeLogin(request, response);
+                String oldToken = this.getAuthzHeader(request);
+                String userName = JWTUtil.getClaim(oldToken, Const.USERNAME);
+                RedisClient redisClient = SpringUtils.getBean(RedisClient.class);
+                UserProperties userProperties = SpringUtils.getBean(UserProperties.class);
+                //当Access-Token未过期，Refresh-Token过期时，刷新Refresh-Token
+                if (!redisClient.hasKey(Const.PREFIX_REFRESH_TOKEN + userName)) {
+                    String currentTimeMillis = String.valueOf(System.currentTimeMillis());
+                    redisClient.set(Const.PREFIX_REFRESH_TOKEN + userName, currentTimeMillis,
+                            Integer.parseInt(userProperties.getRefreshTokenExpireTime()));
+                    String token = JWTUtil.sign(userName, currentTimeMillis);
+                    HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+                    httpServletResponse.setHeader(Const.PREFIX_USER_TOKEN, token);
+                    httpServletResponse.setHeader("Access-Control-Expose-Headers", "Authorization");
+                }
             } catch (Exception e) {
                 // 认证出现异常，传递错误信息msg
                 String msg = e.getMessage();
@@ -149,17 +163,12 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
         httpServletResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
         httpServletResponse.setCharacterEncoding("UTF-8");
         httpServletResponse.setContentType("application/json; charset=utf-8");
-        PrintWriter out = null;
-        try {
-            out = httpServletResponse.getWriter();
+        try (PrintWriter out = httpServletResponse.getWriter()) {
+
             String data = JSONObject.toJSONString(RestTO.error(ResponseCode.NEED_LOGIN.getCode(), msg));
             out.append(data);
         } catch (IOException e) {
             throw new RuntimeException("直接返回Response信息出现IOException异常:" + e.getMessage());
-        } finally {
-            if (out != null) {
-                out.close();
-            }
         }
     }
 
