@@ -189,30 +189,30 @@
     <!--然后定义logger,只有定义了logger并引入的appender,appender才会生效 -->
     <loggers>
 
-<!--        &lt;!&ndash;log4j2 自带过滤日志&ndash;&gt;-->
-<!--        <Logger name="org.apache.catalina.startup.DigesterFactory" level="error"/>-->
-<!--        <Logger name="org.apache.catalina.util.LifecycleBase" level="error"/>-->
-<!--        <Logger name="org.apache.coyote.http11.Http11NioProtocol" level="warn"/>-->
-<!--        <logger name="org.apache.sshd.common.util.SecurityUtils" level="warn"/>-->
-<!--        <Logger name="org.apache.tomcat.util.net.NioSelectorPool" level="warn"/>-->
-<!--        <Logger name="org.crsh.plugin" level="warn"/>-->
-<!--        <logger name="org.crsh.ssh" level="warn"/>-->
-<!--        <Logger name="org.eclipse.jetty.util.component.AbstractLifeCycle" level="error"/>-->
-<!--        <Logger name="org.hibernate.validator.internal.util.Version" level="warn"/>-->
-<!--        <logger name="org.springframework.boot.actuate.autoconfigure.CrshAutoConfiguration" level="warn"/>-->
-<!--        <logger name="org.springframework.boot.actuate.endpoint.jmx" level="warn"/>-->
-<!--        <logger name="org.thymeleaf" level="warn"/>-->
+        <!--log4j2 自带过滤日志-->
+        <Logger name="org.apache.catalina.startup.DigesterFactory" level="error"/>
+        <Logger name="org.apache.catalina.util.LifecycleBase" level="error"/>
+        <Logger name="org.apache.coyote.http11.Http11NioProtocol" level="warn"/>
+        <logger name="org.apache.sshd.common.util.SecurityUtils" level="warn"/>
+        <Logger name="org.apache.tomcat.util.net.NioSelectorPool" level="warn"/>
+        <Logger name="org.crsh.plugin" level="warn"/>
+        <logger name="org.crsh.ssh" level="warn"/>
+        <Logger name="org.eclipse.jetty.util.component.AbstractLifeCycle" level="error"/>
+        <Logger name="org.hibernate.validator.internal.util.Version" level="warn"/>
+        <logger name="org.springframework.boot.actuate.autoconfigure.CrshAutoConfiguration" level="warn"/>
+        <logger name="org.springframework.boot.actuate.endpoint.jmx" level="warn"/>
+        <logger name="org.thymeleaf" level="warn"/>
 
 
-<!--        &lt;!&ndash; 设置对打印sql语句的支持 &ndash;&gt;-->
-<!--        <logger name="java.sql" level="debug" additivity="false">-->
-<!--            <appender-ref ref="Console"/>-->
-<!--        </logger>-->
+        <!-- 设置对打印sql语句的支持 -->
+        <logger name="java.sql" level="debug" additivity="false">
+            <appender-ref ref="Console"/>
+        </logger>
 
-<!--        &lt;!&ndash;记录druid-sql的记录&ndash;&gt;-->
-<!--        <logger name="druid.sql.Statement" level="debug" additivity="false">-->
-<!--            <appender-ref ref="druidSqlRollingFile"/>-->
-<!--        </logger>-->
+        <!--记录druid-sql的记录-->
+        <logger name="druid.sql.Statement" level="debug" additivity="false">
+            <appender-ref ref="druidSqlRollingFile"/>
+        </logger>
 
         <!--建立一个默认的root的logger -->
         <root level="${output_log_level}">
