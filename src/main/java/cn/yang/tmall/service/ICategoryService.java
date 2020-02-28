@@ -18,5 +18,5 @@ public interface ICategoryService {
 
     RestTO<List<Category>> getChildrenParallelCategory(Integer categoryId);
 
-    RestTO getCategoryAndChildrenById(Integer categoryId);
+    RestTO<List<Integer>> getCategoryAndChildrenById(Integer categoryId);
 }

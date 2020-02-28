@@ -15,4 +15,5 @@ public interface Const {
     String CURRENT_TIME_MILLIONS = "currentTimeMillions";
     String PREFIX_USER_TOKEN = "Authorization";
     String PREFIX_REFRESH_TOKEN = "Refresh-Token";
+    String PRICE_ASC_DESC = "price_asc,price_desc";
 }

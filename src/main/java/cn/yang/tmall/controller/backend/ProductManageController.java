@@ -45,7 +45,7 @@ public class ProductManageController {
     /**
      * @Description: 更新商品销售状态
      * @Param productId
-     * @Param status
+     * @Param status 1在售 0下架
      * @Author: Yangtz
      * @Date: 2020-02-25 17:08
      */
@@ -96,6 +96,12 @@ public class ProductManageController {
         return iProductService.searchProduct(productName, productId, pageNum, pageSize);
     }
 
+    /**
+     * @Description: 文件上传
+     * @Param file
+     * @Author: Yangtz
+     * @Date: 2020-02-27 20:39
+     */
     @PostMapping("/upload")
     public RestTO upload(@RequestParam("file") MultipartFile file) {
         String targetFileName = iFileService.upload(file, "file/");

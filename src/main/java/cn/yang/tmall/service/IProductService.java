@@ -4,6 +4,7 @@ import cn.yang.tmall.common.RestTO;
 import cn.yang.tmall.pojo.Product;
 import cn.yang.tmall.vo.ProductDetailVO;
 import cn.yang.tmall.vo.ProductListVO;
+import cn.yang.tmall.vo.SearchProductDTO;
 import com.github.pagehelper.PageInfo;
 
 /**
@@ -22,4 +23,8 @@ public interface IProductService {
     RestTO<PageInfo<ProductListVO>> getProductList(int pageNum, int pageSize);
 
     RestTO<PageInfo<ProductListVO>> searchProduct(String productName, Integer productId, int pageNum, int pageSize);
+
+    RestTO<ProductDetailVO> getProductDetail(Integer productId);
+
+    RestTO<PageInfo> getProductByKeywordCategory(SearchProductDTO dto, int pageNum, int pageSize);
 }

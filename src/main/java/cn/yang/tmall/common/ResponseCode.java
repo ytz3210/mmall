@@ -12,10 +12,15 @@ public enum ResponseCode {
     SUCCESS(1001,"SUCCESS"),
     ERROR(1002,"ERROR"),
     /**
-     * 1100-1199为登录信息状态码
+     * 1100-2099为登录信息状态码
      */
     NEED_LOGIN(1100,"NEED_LOGIN"),
     ILLEGAL_ARGUMENT(1101,"ILLEGAL_ARGUMENT");
+
+    /**
+     * 2100-3099为商品搜索状态码
+     */
+
 
     private final int code;
     private final String msg;

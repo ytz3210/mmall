@@ -71,7 +71,7 @@ public class CategoryServiceImpl implements ICategoryService {
     }
 
     @Override
-    public RestTO getCategoryAndChildrenById(Integer categoryId) {
+    public RestTO<List<Integer>> getCategoryAndChildrenById(Integer categoryId) {
         Set<Category> categorySet = Sets.newHashSet();
         findChildCategory(categorySet, categoryId);
         List<Integer> categoryList = Lists.newArrayList();
